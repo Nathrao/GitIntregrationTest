@@ -1,2 +1,0 @@
-# GitIntregrationTest
-Git with jenkins
