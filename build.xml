@@ -1,34 +1,53 @@
-<?xml version="1.0" ?> 
-<project name="AntExample1" default="war">
+<project name="GitIntregrationTest" basedir="GitIntregrationTest" default="generate_jar">
+    <!-- Fichero Properties -->
+    <property file="build.properties"/>
 
-	<path id="compile.classpath">
-		<fileset dir="WebContent/WEB-INF/lib">
-			<include name="*.jar"/>
-		</fileset>
-	</path>
-	
-	<target name="init">
-		<mkdir dir="build/classes"/>
-		<mkdir dir="dist" />
-	</target>
-	
-	<target name="compile" depends="init" >
-		<javac destdir="build/classes" debug="true" srcdir="src">
-			<classpath refid="compile.classpath"/>
-		</javac>
-	</target>
-	
-	<target name="war" depends="compile">
-		<war destfile="dist/AntExample.war" webxml="WebContent/WEB-INF/web.xml">
-			<fileset dir="WebContent"/>
-			<lib dir="WebContent/WEB-INF/lib"/>
-			<classes dir="build/classes"/>
-		</war>
-	</target>
-	
-	<target name="clean">
-		<delete dir="dist" />
-		<delete dir="build" />
-	</target>
-	
+    <!-- Create folders target -->
+    <target name="create_folders">
+        <echo>Crearing needed folders...</echo>
+        <mkdir dir="${app_dir}"/>
+        <mkdir dir="${app_dir}/META-INF"/>
+        <echo>Done!</echo>
+    </target>
+
+    <!-- Compilarion Target -->
+    <target name="compile">
+        <echo>Compiling classes...</echo>
+        <javac
+               encoding="UTF-8"
+               classpath="${classpath}"
+               srcdir="${source_dir}"
+               destdir="${app_dir}/${classes_dir}"
+               debug="true"/>
+        <echo>Done!</echo>
+    </target>
+
+    <!-- Copy Target -->
+    <target name="copy">
+        <echo>Copying files...</echo>
+        <copy todir="${app_dir}/${meta_dir}">
+            <fileset dir="${root_dir}/${meta_dir}/" includes="*.xml"/>
+        </copy>
+        <echo>Copying META-INF</echo>
+
+        <copy file="${root_dir}/${source_dir}/log4j.xml" todir="${app_dir}" />
+        
+        <echo>Cpoying classes...</echo>
+        <echo>Done!</echo>
+    </target>
+
+    <!-- Clean Target -->
+    <target name="clean">
+        <delete dir="${app_dir}"/>
+    </target>
+
+    <target name="generate_jar">
+        <echo>Generating jar...</echo>
+        <antcall target="create_folders"/>
+        <antcall target="compile"/>
+        <antcall target="copy"/>
+    	<jar destfile="jcg.jar" basedir="${app_dir}"/>
+        <echo>Done!</echo>
+        <antcall target="clean"/>
+    </target>
 </project>
